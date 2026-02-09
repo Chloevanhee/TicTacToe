@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Tic Tac Toe</string>
+    <string name="restart_game">Restart Game</string>
+    <string name="winner_is_player">Winner is Player %1$c</string>
+    <string name="game_is_draw">Game is Draw</string>
+    <string name="it_is_player_turn">It is Player %1$c\'s turn</string>
+</resources>
