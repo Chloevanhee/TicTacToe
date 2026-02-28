@@ -6,3 +6,4 @@ data class GameState(
     val isBoardFull: Boolean = false,
     val winner: Player? = null
 )
+

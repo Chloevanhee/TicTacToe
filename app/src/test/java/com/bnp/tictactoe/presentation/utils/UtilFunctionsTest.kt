@@ -2,6 +2,7 @@ package com.bnp.tictactoe.presentation.utils
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import com.bnp.tictactoe.toPosition
 import org.junit.Test
 
 class UtilFunctionsTest {

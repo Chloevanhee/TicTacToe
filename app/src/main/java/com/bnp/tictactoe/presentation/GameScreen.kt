@@ -6,14 +6,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,17 +23,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bnp.tictactoe.R
+import com.bnp.tictactoe.domain.models.GameState
 import com.bnp.tictactoe.domain.models.Player
-import com.bnp.tictactoe.presentation.mappers.toBoardUi
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun GameScreen(
     modifier: Modifier,
-    state: GameUiState,
+    state: GameState,
     onAction: (GameUiAction) -> Unit
 ) {
-    val boardListItem = state.board.toBoardUi().boardListItem
+    val boardCells = state.board.boardCells
 
     Column(
         modifier.fillMaxWidth(),
@@ -44,37 +41,43 @@ fun GameScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = stringResource(R.string.it_is_player_turn, state.currentPlayer))
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(state.board.numberOfColumns),
-            modifier = modifier
-                .size(300.dp)
-                .padding(5.dp),
-            userScrollEnabled = false
+        Column(
         ) {
-            itemsIndexed(
-                boardListItem,
-                key = { _, item -> item.id },
-            ) { index, cell ->
-                Box(
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .border(BorderStroke(1.dp, Color.DarkGray))
-                        .clickable { onAction(GameUiAction.ClickOnCellBoard(index)) },
-                    contentAlignment = Alignment.Center
-                )
-                {
-                    val (text, color) = when (cell.player) {
-                        Player.X -> "X" to Color.Blue
-                        Player.O -> "O" to Color.Red
-                        null -> "" to Color.Transparent
+            boardCells.forEachIndexed { indewRow, row ->
+                Row {
+                    row.forEachIndexed { index, player ->
+                        Box(
+                            modifier = Modifier
+                                .size(100.dp)
+                                .aspectRatio(1f)
+                                .border(BorderStroke(1.dp, Color.DarkGray))
+                                .clickable {
+                                    onAction(
+                                        GameUiAction.ClickOnCellBoard(
+                                            indewRow,
+                                            index
+                                        )
+                                    )
+                                },
+                            contentAlignment = Alignment.Center
+                        )
+                        {
+                            val (text, color) = when (player) {
+                                Player.X -> "X" to Color.Blue
+                                Player.O -> "O" to Color.Red
+                                null -> "" to Color.Transparent
+                            }
+                            Text(
+                                text = text,
+                                color = color
+                            )
+                        }
                     }
-                    Text(
-                        text = text,
-                        color = color
-                    )
                 }
 
             }
+
+
         }
         Button({ onAction(GameUiAction.RestartGame) }) {
             Text(stringResource(R.string.restart_game))
@@ -85,10 +88,11 @@ fun GameScreen(
         if (state.isBoardFull && state.winner == null) {
             Text(text = stringResource(R.string.game_is_draw))
         }
-
     }
 
+
 }
+
 
 @Composable
 fun GameScreenRoot(modifier: Modifier, viewModel: GameViewModel = koinViewModel()) {
@@ -100,6 +104,6 @@ fun GameScreenRoot(modifier: Modifier, viewModel: GameViewModel = koinViewModel(
 @Preview(showBackground = true)
 @Composable
 fun GameScreenPreview() {
-    val state = GameUiState()
+    val state = GameState()
     GameScreen(modifier = Modifier.fillMaxSize(), state = state, onAction = {})
 }

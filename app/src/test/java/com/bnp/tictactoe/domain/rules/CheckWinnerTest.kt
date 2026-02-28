@@ -11,7 +11,7 @@ import com.bnp.tictactoe.domain.models.Player
 import com.bnp.tictactoe.domain.usecases.PlayTurnUseCase
 import com.bnp.tictactoe.emptyBoard
 import com.bnp.tictactoe.firstCellFreePositionBoard
-import com.bnp.tictactoe.presentation.utils.toPosition
+import com.bnp.tictactoe.toPosition
 import org.junit.Test
 
 class CheckWinnerTest {
@@ -43,12 +43,12 @@ class CheckWinnerTest {
     fun `given board one turn from victory and board nearly full,when player makes winning turn,then player is declared the winner -not tested position 1,2,6`() {
         val playerList = listOf(
             Player.X,
-            null, // index 1
-            null, // index 2
+            null,
+            null,
             Player.O,
             Player.X,
             Player.X,
-            null, // index 6
+            null,
             Player.X,
             Player.O
         )
@@ -61,15 +61,14 @@ class CheckWinnerTest {
         listOfBoardWithNullAtOnePosition.forEachIndexed { index, board ->
             if (playerList[index] != null) {
                 val (x, y) = index.toPosition(3, 3)
-                val player = Player.X
                 println("------------------------------------")
-                println("index = $index => x = ${x}, y = $y Player = $player")
+                println("index = $index => x = ${x}, y = $y Player = ${playerList[index]}")
                 print("board before: ${board}\n")
                 boardBeforeTurnList.add(board)
                 playTurnUseCase = PlayTurnUseCase()
                 val gameState = playTurnUseCase(board, x, y, playerList[index]!!)
                 println("board after: ${gameState.board}\n")
-                boardAfterTurnList.add(board)
+                boardAfterTurnList.add(gameState.board)
                 resultWinnerList.add(gameState.winner)
                 assertThat(gameState.winner).isEqualTo(playerList[index])
             }
@@ -103,10 +102,11 @@ class CheckWinnerTest {
 
     @Test
     fun `given a board with one null cell, when checking isFull, then returns false - no winner `() {
-        val listOfBoardWithNullAtOnePosition =
-            (0..8).map { createGameBoardWithEmptyCellAtPosition(it) }
-        listOfBoardWithNullAtOnePosition[0].boardCells[0][0] = Player.X
-        listOfBoardWithNullAtOnePosition.forEachIndexed { index, board ->
+        val boards = (0..8).map { createGameBoardWithEmptyCellAtPosition(it) }.toMutableList()
+
+        boards[0] = boards[0].takeCell(0, 0, Player.X)
+
+        boards.forEachIndexed { index, board ->
             if (index == 0) {
                 assertThat(board.isFull()).isTrue()
             } else {
@@ -117,18 +117,17 @@ class CheckWinnerTest {
 
     @Test
     fun `given horizontal row nearly full of the same player, when the last cell is filled, then the winner is the player`() {
-        lateinit var board: GameBoard
-        lateinit var arrayFull: Array<Player?>
         val playTurn = PlayTurnUseCase()
         for (i in 0..2) {
-            board = emptyBoard()
-            arrayFull = arrayOf(Player.X, Player.X, Player.X)
-            arrayFull[i] = null
-            board.boardCells[i] = arrayFull
+            var board = emptyBoard()
+            for (col in 0..2) {
+                if (col != i) {
+                    board = board.takeCell(col, i, Player.X)
+                }
+            }
+            
             println("board before: ${board}\n")
-            val (x, y) = (i + 3 * i).toPosition(3, 3)
-            println("index = $i => x = ${x}, y = $y")
-            val result = playTurn(board, x, y, Player.X)
+            val result = playTurn(board, i, i, Player.X)
             println("board after: ${result.board}\n")
             assertThat(result.winner).isEqualTo(Player.X)
         }
@@ -136,18 +135,17 @@ class CheckWinnerTest {
 
     @Test
     fun `given vertical row nearly full of the same player, when the last cell is filled, then the winner is the player`() {
-        lateinit var board: GameBoard
         val playTurn = PlayTurnUseCase()
         for (i in 0..2) {
-            board = emptyBoard()
-            board.boardCells[0][i] = Player.X
-            board.boardCells[1][i] = Player.X
-            board.boardCells[2][i] = Player.X
-            board.boardCells[i][i] = null
+            var board = emptyBoard()
+            for (row in 0..2) {
+                if (row != i) {
+                    board = board.takeCell(i, row, Player.X)
+                }
+            }
+
             println("board before: ${board}\n")
-            val (x, y) = (i + 3 * i).toPosition(3, 3)
-            println("index = $i => x = ${x}, y = $y")
-            val result = playTurn(board, x, y, Player.X)
+            val result = playTurn(board, i, i, Player.X)
             println("board after: ${result.board}\n")
             assertThat(result.winner).isEqualTo(Player.X)
         }
@@ -156,16 +154,14 @@ class CheckWinnerTest {
     @Test
     fun `given diagonal left to right nearly full of the same player, when the last cell is filled, then the winner is the player`() {
         val playTurn = PlayTurnUseCase()
-        val board = emptyBoard()
         for (i in 0..2) {
-            board.boardCells[0][0] = Player.X
-            board.boardCells[1][1] = Player.X
-            board.boardCells[2][2] = Player.X
-            board.boardCells[i][i] = null
+            var board = emptyBoard()
+            if (i != 0) board = board.takeCell(0, 0, Player.X)
+            if (i != 1) board = board.takeCell(1, 1, Player.X)
+            if (i != 2) board = board.takeCell(2, 2, Player.X)
+
             println("board before: ${board}\n")
-            val (x, y) = (i + 3 * i).toPosition(3, 3)
-            println("index = $i => x = $x, y = $y")
-            val result = playTurn(board, x, y, Player.X)
+            val result = playTurn(board, i, i, Player.X)
             println("board after: ${result.board}\n")
             assertThat(result.winner).isEqualTo(Player.X)
         }
@@ -174,15 +170,16 @@ class CheckWinnerTest {
     @Test
     fun `given diagonal right to left nearly full of the same player, when the last cell is filled, then the winner is the player`() {
         val playTurn = PlayTurnUseCase()
-        val board = emptyBoard()
         for (i in 0..2) {
-            board.boardCells[0][2] = Player.X
-            board.boardCells[1][1] = Player.X
-            board.boardCells[2][0] = Player.X
-            board.boardCells[i][2 - i] = null
+            var board = emptyBoard()
+            if (i != 0) board = board.takeCell(2, 0, Player.X)
+            if (i != 1) board = board.takeCell(1, 1, Player.X)
+            if (i != 2) board = board.takeCell(0, 2, Player.X)
+
             println("board before: ${board}\n")
-            println("index = $i => x = ${2 - i}, y = $i")
-            val result = playTurn(board, 2 - i, i, Player.X)
+            val x = 2 - i
+            val y = i
+            val result = playTurn(board, x, y, Player.X)
             println("board after: ${result.board}\n")
             assertThat(result.winner).isEqualTo(Player.X)
         }
@@ -191,16 +188,13 @@ class CheckWinnerTest {
     @Test
     fun `given diagonal right to left nearly full of the same player, when the last cell is filled x0 y2, then the winner is the player`() {
         val playTurn = PlayTurnUseCase()
-        val board = emptyBoard()
-        board.boardCells[0][2] = Player.X
-        board.boardCells[1][1] = Player.X
-        board.boardCells[2][0] = null
+        var board = emptyBoard()
+        board = board.takeCell(2, 0, Player.X)
+        board = board.takeCell(1, 1, Player.X)
+        
         println("board before: ${board}\n")
-        println(" x = 0, y = 2")
         val result = playTurn(board, 0, 2, Player.X)
         println("board after: ${result.board}\n")
         assertThat(result.winner).isEqualTo(Player.X)
-
     }
-
 }
