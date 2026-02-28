@@ -29,7 +29,7 @@ Sources : [Tic tac toe](https://github.com/stephane-genicot/katas/blob/master/Ti
 
 - Install Android Studio version Otter 3 Feature Drop 2025.2.3.
 - Clone the repository in android studio:New->Project From version.
-  Control https://github.com/2026-DEV2-032/TicTacToe.git.
+  Control https://github.com/Chloevanhee/TicTacToe.git.
 - Configure JDK 11 in Android Studio (File > Settings > Build Tools > Gradle).
 - Ensure Android SDK 36 is installed via SDK Manager.
 - Recommended emulator: Pixel 6a with Android 16 / API 36 “Baklava” | x86_64
