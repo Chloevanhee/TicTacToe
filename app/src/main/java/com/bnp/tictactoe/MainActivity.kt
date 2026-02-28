@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun GameScreenPreview() {
     TicTacToeTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             GameScreenRoot(

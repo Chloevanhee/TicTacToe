@@ -4,17 +4,12 @@ import com.bnp.tictactoe.domain.models.GameBoard
 import com.bnp.tictactoe.domain.models.Player
 
 fun checkWinner(board: GameBoard): Player? {
-    val characterOfTheWinner = getPossibleWinCombinationsHardCoded(board)
-    return if (characterOfTheWinner != null) {
-        Player(characterOfTheWinner)
-    } else {
-        null
-    }
+    return getWinnerFromCombinations(board)
 }
 
-private fun getPossibleWinCombinationsHardCoded(
+private fun getWinnerFromCombinations(
     board: GameBoard
-): Char? {
+): Player? {
     println("board $board")
     with(board.boardCells) {
         return if (this[0][0] != null && this[0][0] == this[0][1] && this[0][1] == this[0][2]) {

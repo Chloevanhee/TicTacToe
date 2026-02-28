@@ -22,24 +22,24 @@ class PlayTurnUseCaseTest {
     fun setUp() {
         board = emptyBoard()
         playTurnUseCase = PlayTurnUseCase()
-        player = Player('X')
+        player = Player.X
     }
 
     @Test
     fun `when a player placed on a free position, the next player should have switched`(
     ) {
-        val player = Player('X')
+        val player = Player.X
         playTurnUseCase = PlayTurnUseCase()
         var result = playTurnUseCase(board, 0, 0, player)
-        assertThat(result.currentPlayer).isEqualTo(Player('O'))
+        assertThat(result.currentPlayer).isEqualTo(Player.O)
         result = playTurnUseCase(board, 0, 0, result.currentPlayer)
-        assertThat(result.currentPlayer).isEqualTo(Player('X'))
+        assertThat(result.currentPlayer).isEqualTo(Player.X)
     }
 
     @Test
     fun `when a player placed on a free position outside the board boundaries, teh player should have switched`(
     ) {
-        val player = Player('X')
+        val player = Player.X
         playTurnUseCase = PlayTurnUseCase()
         val result = playTurnUseCase(board, -1, 4, player)
         assertThat(result.currentPlayer).isEqualTo(player)
@@ -48,7 +48,7 @@ class PlayTurnUseCaseTest {
     @Test
     fun `when a player is trying to place on a non-free position, it should return an error`() =
         runTest {
-            player = Player('O')
+            player = Player.O
             board = firstCellFreePositionBoard()
 
             playTurnUseCase = PlayTurnUseCase()
@@ -59,7 +59,7 @@ class PlayTurnUseCaseTest {
     @After
     fun tearDown() {
         board = emptyBoard()
-        player = Player('X')
+        player = Player.X
         playTurnUseCase = PlayTurnUseCase()
 
     }

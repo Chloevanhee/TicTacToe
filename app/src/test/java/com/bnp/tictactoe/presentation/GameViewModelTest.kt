@@ -23,10 +23,10 @@ class GameViewModelTest {
     @Test
     fun `given an empty board,when playTurn places player characters then the player switches and GameState updated`() {
         val board = emptyBoard()
-        val player = Player('X')
+        val player = Player.X
         val stateResult = playTurnUseCase(board, 0, 0, player)
-        assertThat(stateResult.currentPlayer).isEqualTo(Player('O'))
-        assertThat(stateResult.board.boardCells[0][0]).isEqualTo('X')
+        assertThat(stateResult.currentPlayer).isEqualTo(Player.O)
+        assertThat(stateResult.board.boardCells[0][0]).isEqualTo(Player.X)
         assertThat(stateResult.winner).isNull()
         assertThat(stateResult.isBoardFull).isFalse()
     }

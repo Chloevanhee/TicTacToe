@@ -7,5 +7,5 @@ data class GameUiState(
     val board: GameBoard = GameBoard(),
     val isBoardFull: Boolean = false,
     val winner: Player? = null,
-    val currentPlayer: Player = Player('X'),
+    val currentPlayer: Player = Player.X,
 )

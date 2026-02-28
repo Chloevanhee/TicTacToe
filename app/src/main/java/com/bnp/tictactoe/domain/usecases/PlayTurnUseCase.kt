@@ -12,7 +12,7 @@ class PlayTurnUseCase() : PlayTurnUseCaseInterface {
             return GameState(board = board, currentPlayer = player)
         }
 
-        val newBord = board.takeCell(x, y, player.character)
+        val newBord = board.takeCell(x, y, player)
         val checkWinner = checkWinner(newBord)
         val isBoardFull = newBord.isFull()
         val switchPlayer = player.switch()

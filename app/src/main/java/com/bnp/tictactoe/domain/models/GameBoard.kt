@@ -6,7 +6,7 @@ import com.bnp.tictactoe.domain.utils.prettyPrint
 data class GameBoard(
     val numberOfColumns: Int = 3,
     val numberOfLines: Int = 3,
-    val boardCells: Array<Array<Char?>> = Array(numberOfLines) { Array(numberOfColumns) { null } },
+    val boardCells: Array<Array<Player?>> = Array(numberOfLines) { Array(numberOfColumns) { null } },
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -28,8 +28,8 @@ data class GameBoard(
         return result
     }
 
-    fun takeCell(x: Int, y: Int, playerCharacter: Char): GameBoard {
-        val newBoardCells: Array<Array<Char?>> =
+    fun takeCell(x: Int, y: Int, playerCharacter: Player): GameBoard {
+        val newBoardCells: Array<Array<Player?>> =
             Array(numberOfLines) { Array(numberOfColumns) { null } }
         for (i in 0 until numberOfLines) {
             for (j in 0 until numberOfColumns) {

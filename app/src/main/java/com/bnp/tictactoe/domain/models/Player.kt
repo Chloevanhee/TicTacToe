@@ -1,8 +1,11 @@
 package com.bnp.tictactoe.domain.models
 
-data class Player(val character: Char) {
-    fun switch() =
-        Player(if (character == 'X') 'O' else 'X')
+
+enum class Player {
+    X,
+    O;
+
+    fun switch(): Player = if (this == X) O else X
 }
 
 

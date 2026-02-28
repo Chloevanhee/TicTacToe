@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.junit)
     implementation(libs.jupiter)
+    implementation(libs.bundles.koin.compose)
 
     testRuntimeOnly(libs.jupiter.engine)
     testImplementation(libs.jupiter.api)

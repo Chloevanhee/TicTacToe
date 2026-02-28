@@ -24,13 +24,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bnp.tictactoe.R
-import com.bnp.tictactoe.domain.usecases.PlayTurnUseCase
+import com.bnp.tictactoe.domain.models.Player
 import com.bnp.tictactoe.presentation.mappers.toBoardUi
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun GameScreen(
@@ -45,7 +43,7 @@ fun GameScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = stringResource(R.string.it_is_player_turn, state.currentPlayer.character))
+        Text(text = stringResource(R.string.it_is_player_turn, state.currentPlayer))
         LazyVerticalGrid(
             columns = GridCells.Fixed(state.board.numberOfColumns),
             modifier = modifier
@@ -56,7 +54,7 @@ fun GameScreen(
             itemsIndexed(
                 boardListItem,
                 key = { _, item -> item.id },
-            ) { index, value ->
+            ) { index, cell ->
                 Box(
                     modifier = Modifier
                         .aspectRatio(1f)
@@ -65,9 +63,14 @@ fun GameScreen(
                     contentAlignment = Alignment.Center
                 )
                 {
+                    val (text, color) = when (cell.player) {
+                        Player.X -> "X" to Color.Blue
+                        Player.O -> "O" to Color.Red
+                        null -> "" to Color.Transparent
+                    }
                     Text(
-                        text = if (value.playerCharacter != null) value.playerCharacter.toString() else " ",
-                        color = if (value.playerCharacter == 'X') Color.Blue else Color.Red
+                        text = text,
+                        color = color
                     )
                 }
 
@@ -77,7 +80,7 @@ fun GameScreen(
             Text(stringResource(R.string.restart_game))
         }
         if (state.winner != null) {
-            Text(text = stringResource(R.string.winner_is_player, state.winner.character))
+            Text(text = stringResource(R.string.winner_is_player, state.winner))
         }
         if (state.isBoardFull && state.winner == null) {
             Text(text = stringResource(R.string.game_is_draw))
@@ -87,16 +90,8 @@ fun GameScreen(
 
 }
 
-@Suppress("UNCHECKED_CAST")
 @Composable
-fun GameScreenRoot(modifier: Modifier) {
-    val viewModel: GameViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return GameViewModel(PlayTurnUseCase()) as T
-            }
-        }
-    )
+fun GameScreenRoot(modifier: Modifier, viewModel: GameViewModel = koinViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     GameScreen(modifier, state, viewModel::onAction)
 
@@ -105,5 +100,6 @@ fun GameScreenRoot(modifier: Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GameScreenPreview() {
-    GameScreenRoot(Modifier.fillMaxSize())
+    val state = GameUiState()
+    GameScreen(modifier = Modifier.fillMaxSize(), state = state, onAction = {})
 }
