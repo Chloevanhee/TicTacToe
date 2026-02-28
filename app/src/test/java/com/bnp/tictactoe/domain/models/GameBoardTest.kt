@@ -7,14 +7,14 @@ import com.bnp.tictactoe.emptyBoard
 import com.bnp.tictactoe.fullBoardWithWinner
 import com.bnp.tictactoe.middleOfTheGameBoard
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class GameBoardTest {
 
     private lateinit var gameBoard: GameBoard
 
-    @Before
+    @BeforeEach
     fun setUp() {
         gameBoard = emptyBoard()
     }
@@ -44,4 +44,3 @@ class GameBoardTest {
     }
 
 }
-

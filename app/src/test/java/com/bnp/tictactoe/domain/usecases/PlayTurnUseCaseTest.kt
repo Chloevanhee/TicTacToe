@@ -7,9 +7,9 @@ import com.bnp.tictactoe.domain.models.Player
 import com.bnp.tictactoe.emptyBoard
 import com.bnp.tictactoe.firstCellFreePositionBoard
 import kotlinx.coroutines.test.runTest
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 
 class PlayTurnUseCaseTest {
@@ -18,7 +18,7 @@ class PlayTurnUseCaseTest {
     private lateinit var playTurnUseCase: PlayTurnUseCase
     private lateinit var player: Player
 
-    @Before
+    @BeforeEach
     fun setUp() {
         board = emptyBoard()
         playTurnUseCase = PlayTurnUseCase()
@@ -56,7 +56,7 @@ class PlayTurnUseCaseTest {
             assertThat(result.currentPlayer).isEqualTo(player)
         }
 
-    @After
+    @AfterEach
     fun tearDown() {
         board = emptyBoard()
         player = Player.X

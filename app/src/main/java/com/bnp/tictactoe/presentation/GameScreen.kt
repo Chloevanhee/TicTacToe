@@ -41,8 +41,7 @@ fun GameScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = stringResource(R.string.it_is_player_turn, state.currentPlayer))
-        Column(
-        ) {
+        Column {
             boardCells.forEachIndexed { indewRow, row ->
                 Row {
                     row.forEachIndexed { index, player ->

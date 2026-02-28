@@ -178,8 +178,7 @@ class CheckWinnerTest {
 
             println("board before: ${board}\n")
             val x = 2 - i
-            val y = i
-            val result = playTurn(board, x, y, Player.X)
+            val result = playTurn(board, x, i, Player.X)
             println("board after: ${result.board}\n")
             assertThat(result.winner).isEqualTo(Player.X)
         }
